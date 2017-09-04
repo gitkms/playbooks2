@@ -1,0 +1,82 @@
+- hosts: kms_servers
+  tasks:
+  - name: Task info
+    debug:
+      msg: "Delete all on {{hostname}}, IP {{ ansible_ssh_host }}"
+  - name: delete folder for installation files
+    file: 
+      path: /usr/local/install
+      state: absent
+  - name: delete folder for tomcat kms
+    file:
+      path: /usr/local/tomcat7-kms
+      state: absent
+  - name: delete folder for tomcat solr
+    file:
+      path: /usr/local/tomcat7-solr
+      state: absent
+  - name: delete java 1.7
+    file:
+      path: /usr/local/install/4.6.1/jdk-7u80-linux-x64.rpm
+      state: absent
+  - name: remove java 1.7
+    yum:
+      name: jdk.x86_64
+      state: absent
+  - name: remove httpd
+    yum:
+      name: httpd
+      state: absent
+  - name: remove mod_jk module for httpd
+    file:
+      path: /usr/lib64/httpd/modules/mod_jk.so
+      state: absent
+  - name: remove mod_ssl module for httpd
+    file:
+      path: /usr/lib64/httpd/modules/mod_ssl.so
+      state: absent 
+  - name: remove zabbix-agent
+    yum:
+      name: zabbix-agent.x86_64
+      state: absent
+  - name: delete folder for zabbix
+    file: 
+      path: /opt/zabbix
+      state: absent
+  - name: delete folder for zabbix 2
+    file: 
+      path: /etc/zabbix
+      state: absent
+- hosts: db_servers
+  tasks:
+  - name: Task info
+    debug:
+      msg: "Vanilla DB REMOVE Playbook on {{hostname}}, IP {{ ansible_ssh_host }}"
+  - name: delete installation folder
+    file: 
+      path: /usr/local/install
+      state: absent
+  - name: remove zabbix-agent
+    yum:
+      name: zabbix-agent.x86_64
+      state: absent
+  - name: delete folder for zabbix 1
+    file: 
+      path: /opt/zabbix
+      state: absent
+  - name: delete zabbix folder 2
+    file:
+      path: /etc/zabbix/
+      state: absent
+  - name: remove mysql-server
+    yum:
+      name: mysql-server
+      state: absent
+  - name: delete mysql log
+    file:
+      path: /var/log/mysqld.log
+      state: absent
+  - name: delete mysql log
+    file:
+      path: /var/lib/mysql
+      state: absent 

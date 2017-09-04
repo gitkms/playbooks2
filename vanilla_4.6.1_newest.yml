@@ -1,0 +1,229 @@
+- hosts: db_servers
+  tasks:
+  - name: Task info
+    debug:
+      msg: "Vanilla DB installation KMS 4.6.1 on {{hostname}}, IP {{ ansible_ssh_host }}"
+  - name: Create installation folder
+    file: 
+      path: /usr/local/install
+      state: directory
+      mode: 0755
+  - name: Copy installer 4.6.1
+    copy:
+      src: /ansible/4.6.1/installer.jar
+      dest: /usr/local/install
+      mode: 0755
+  - name: Download zabbix rpm (zabbix version 3.010)
+    get_url:
+      url: http://repo.zabbix.com/zabbix/3.0/rhel/7/x86_64/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
+      dest: /usr/local/install/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
+      mode: 0755
+  - name: Install zabbix-agent
+    yum:
+      name: /usr/local/install/4.6.1/zabbix-agent-3.0.10-1.el7.x86_64.rpm
+      state: latest
+  - name: Create folder for zabbix
+    file: 
+      path: /opt/zabbix
+      state: directory
+      mode: 0755
+  - name: Copy zabbix config 1
+    copy:
+      src: /usr/local/install/4.6.1/zabbix/zabbix_agent_db/zabbix/
+      dest: /etc/zabbix/
+  - name: Copy zabbix config 2
+    copy:
+      src: /usr/local/install/4.6.1/zabbix/zabbix_agent_db/opt/zabbix/
+      dest: /opt/zabbix/
+  - name: Setup zabbix (zabbix_agentd.conf)
+    replace:
+      dest: /etc/zabbix/zabbix_agentd.conf
+      regexp: 'ansible_db 127.0.0.1'
+      replace: '{{ hostname }} {{ ansible_ssh_host }}'
+  - name: Add MySQL repo
+    yum: name=http://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm state=present
+  - name: Install MySQL
+    yum: name={{ item }} update_cache=yes state=installed
+    with_items:
+      - mysql
+      - mysql-server
+  - name: Enable Epel
+    yum:
+      name: epel-release
+      state: latest
+  - name: Install Python-devel
+    yum:
+      name: python-devel
+      state: latest
+  - name: Install Mysql-devel
+    yum:
+      name: mysql-devel
+      state: latest
+  - name: Install gcc
+    yum:
+      name: gcc
+      state: latest
+  - name: Install pip
+    yum:
+      name: python-pip
+      state: latest
+  - name: Ensure mysql started
+    service:
+      name: mysqld
+      state: started
+      enabled: yes
+  - name: Install the Python MySQLB module
+    pip: name=MySQL-python
+  - name: Find temporary password for MySQL
+    shell: "echo `grep 'temporary.*root@localhost' /var/log/mysqld.log | sed 's/.*root@localhost: //'`"
+    register: mysql_root_password_temp
+    tags: register
+  - name: Set new password from temporary password
+    shell: 'mysql -e "SET PASSWORD = PASSWORD(''{{ mysql_root_password }}'');" --connect-expired-password -uroot -p"{{ mysql_root_password_temp.stdout }}"'
+  - name: Create a new schema
+    mysql_db:
+      login_user: root
+      login_password: mysql_root_password
+      name: jenkins_eng_4_6_1
+      state: present
+- hosts: kms_servers
+  tasks:
+  - name: Task info
+    debug:
+      msg: "Vanilla install KMS 4.6.1 on {{hostname}}, IP {{ ansible_ssh_host }}"
+  - name: Update system
+    yum: name='*' state=latest
+  - name: Create folder for installation files
+    file: 
+      path: /usr/local/install
+      state: directory
+      mode: 0755
+  - name: Create directory for static files
+    file: 
+      path: /usr/local/apps
+      state: directory
+      mode: 0755
+  - name: Copy java 1.7
+    copy:
+      src: /usr/local/install/4.6.1/jdk-7u80-linux-x64.rpm
+      dest: /usr/local/install
+      mode: 0755
+  - name: install java 1.7
+    yum:
+      name: /usr/local/install/jdk-7u80-linux-x64.rpm
+      state: latest
+  - name: Install httpd
+    yum:
+      name: httpd
+      state: latest
+  - name: Copy mod_jk module for httpd
+    copy:
+      src: /usr/local/install/4.6.1/modules/mod_jk.so
+      dest: /usr/lib64/httpd/modules/mod_jk.so
+  - name: Copy SSL module for httpd
+    copy:
+      src: /usr/local/install/4.6.1/modules/mod_ssl.so
+      dest: /usr/lib64/httpd/modules/mod_ssl.so
+  - name: Copy configs for httpd
+    copy:
+      src: /usr/local/install/4.6.1/httpd/
+      dest: /etc/httpd
+  - name: Copy tomcat for kms
+    copy:
+      src: /usr/local/install/4.6.1/tomcat7-kms
+      dest: /usr/local/tomcat7-kms
+  - name: Copy tomcat for solr
+    copy:
+      src: /usr/local/install/4.6.1/tomcat7-solr
+      dest: /usr/local/tomcat7-solr
+  - name: Copy kms.war
+    copy:
+      src: /usr/local/install/4.6.1/war/kms-4.6.1.war
+      dest: /usr/local/tomcat7-kms/webapps/kms.war
+  - name: Copy solr.war
+    copy:
+      src: /usr/local/install/4.6.1/war/kms-solr-4.6.1.war
+      dest: /usr/local/apps/tomcat7-solr/webapps/solr.war
+  - name: Copy installer
+    copy:
+      src: /usr/local/install/4.6.1/installer.jar
+      dest: /usr/local/install/installer.jar
+  - name: Copy installer properties
+    copy:
+      src: /usr/local/install/4.6.1/installer.properties
+      dest: /usr/local/install/installer.properties
+  - name: Set up installer property
+    replace:
+      dest: /usr/local/install/4.6.1/properties.sql
+      regexp: '$db_url'
+      replace: '{{ ansible_ssh_host }}'
+  - name: Run Installer
+    command: java -jar installer.jar -options installer.properties
+  - name: Creating services
+    copy:
+      src: /usr/local/install/services
+      dest: /etc/init.d/
+  - name: Download zabbix rpm (zabbix version 3.010)
+    get_url:
+      url: http://repo.zabbix.com/zabbix/3.0/rhel/7/x86_64/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
+      dest: /usr/local/install/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
+      mode: 0755
+  - name: Install zabbix-agent
+    yum:
+      name: /usr/local/install/zabbix-agent-3.0.10-1.el7.x86_64.rpm
+      state: latest
+  - name: Create folder for zabbix
+    file: 
+      path: /opt/zabbix
+      state: directory
+      mode: 0755
+  - name: Copy zabbix config 1
+    copy:
+      src: /usr/local/install/zabbix/zabbix_agent_app/zabbix/
+      dest: /etc/zabbix/
+  - name: Copy zabbix config 2
+    copy:
+      src: /usr/local/install/zabbix/zabbix_agent_app/opt/zabbix/
+      dest: /opt/zabbix/
+  - name: Setup zabbix (zabbix_agentd.conf)
+    replace:
+      dest: /etc/zabbix/zabbix_agentd.conf
+      regexp: 'ansible_app 127.0.0.1'
+      replace: '{{ hostname }} {{ ansible_ssh_host }}'
+  - name: Set up bootstrap part one, IP of db server
+    replace:
+      dest: /usr/local/apps/bootstrap.properties
+      regexp: 'db_ip'
+      replace: '{{ ansible_ssh_host }}'
+  - name: Set up bootstrap part two, company name
+    replace:
+      dest: /usr/local/apps/bootstrap.properties
+      regexp: 'company_name'
+      replace: '{{ company_name }}'
+- hosts: db_servers
+  tasks:	  	  
+  - name: Copy SQL properties file
+    copy:
+      src: /usr/local/install/properties.sql
+      dest: /usr/local/install
+  - name: Copy SQL properties for solr
+    copy:
+      src: /usr/local/install/solr.sql
+      dest: /usr/local/install
+  - name: Set up SQL properties, company name
+    replace:
+      dest: /usr/local/install/properties.sql
+      regexp: 'company_name'
+      replace: '{{ company_name }}'
+  - name: Set up SQL properties part two, IP of DB server
+    replace:
+      dest: /usr/local/install/properties.sql
+      regexp: 'db_ip'
+      replace: '{{ ansible_ssh_host }}'
+  - name: Insert properties into schema
+    mysql_db:
+      login_user: root
+      login_password: '{{ mysql_root_password }}'
+      name: jenkins_eng_4_6_1
+      state: present
+      import target: /usr/local/install/properties.sql
