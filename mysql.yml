@@ -1,11 +1,5 @@
 - hosts: db_servers
   tasks:
-  - name: Specify MySQL root password before installing
-    debconf: name='mysql-server' question='mysql-server/root_password' value='{{mysql_root_password | quote}}' vtype='password'
-    become: true
-  - name: Confirm MySQL root password before installing
-    debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{mysql_root_password | quote}}' vtype='password'
-    become: true
   - name: Add MySQL repo
     yum: name=http://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm state=present
   - name: Install MySQL
@@ -17,7 +11,7 @@
     yum:
       name: epel-release
       state: latest
-  - name: Install Python-devel one
+  - name: Install Python-devel
     yum:
       name: python-devel
       state: latest
