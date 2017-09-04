@@ -34,3 +34,6 @@
       enabled: yes
   - name: Install the Python MySQLB module
     pip: name=MySQL-python
+  - name: reset mysql 5.6+ default password (no longer empty)
+    shell: mysql_secret=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}') && mysqladmin -u  --password=${kmsadmin123} password 
+ 
