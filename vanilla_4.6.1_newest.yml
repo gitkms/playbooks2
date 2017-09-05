@@ -10,17 +10,17 @@
       mode: 0755
   - name: Copy installer 4.6.1
     copy:
-      src: /ansible/4.6.1/installer.jar
+      src: /usr/local/install/4.6.1/installer.jar
       dest: /usr/local/install
       mode: 0755
   - name: Download zabbix rpm (zabbix version 3.010)
     get_url:
       url: http://repo.zabbix.com/zabbix/3.0/rhel/7/x86_64/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
-      dest: /usr/local/install/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
+      dest: /usr/local/install/4.6.1/zabbix/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
       mode: 0755
   - name: Install zabbix-agent
     yum:
-      name: /usr/local/install/4.6.1/zabbix-agent-3.0.10-1.el7.x86_64.rpm
+      name: /usr/local/install/4.6.1/zabbix/zabbix-agent-3.0.10-1.el7.x86_64.rpm
       state: latest
   - name: Create folder for zabbix
     file: 
@@ -166,11 +166,11 @@
   - name: Download zabbix rpm (zabbix version 3.010)
     get_url:
       url: http://repo.zabbix.com/zabbix/3.0/rhel/7/x86_64/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
-      dest: /usr/local/install/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
+      dest: /usr/local/install/4.6.1/zabbix/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
       mode: 0755
   - name: Install zabbix-agent
     yum:
-      name: /usr/local/install/zabbix-agent-3.0.10-1.el7.x86_64.rpm
+      name: /usr/local/install/4.6.1/zabbix/zabbix-agent-3.0.10-1.el7.x86_64.rpm
       state: latest
   - name: Create folder for zabbix
     file: 
@@ -179,11 +179,11 @@
       mode: 0755
   - name: Copy zabbix config 1
     copy:
-      src: /usr/local/install/zabbix/zabbix_agent_app/zabbix/
+      src: /usr/local/install/4.6.1/zabbix/zabbix_agent_app/zabbix/
       dest: /etc/zabbix/
   - name: Copy zabbix config 2
     copy:
-      src: /usr/local/install/zabbix/zabbix_agent_app/opt/zabbix/
+      src: /usr/local/install/4.6.1/zabbix/zabbix_agent_app/opt/zabbix/
       dest: /opt/zabbix/
   - name: Setup zabbix (zabbix_agentd.conf)
     replace:
@@ -204,11 +204,11 @@
   tasks:	  	  
   - name: Copy SQL properties file
     copy:
-      src: /usr/local/install/properties.sql
+      src: /usr/local/install/4.6.1/sql/properties.sql
       dest: /usr/local/install
   - name: Copy SQL properties for solr
     copy:
-      src: /usr/local/install/solr.sql
+      src: /usr/local/install/4.6.1/sql/solr.sql
       dest: /usr/local/install
   - name: Set up SQL properties, company name
     replace:
