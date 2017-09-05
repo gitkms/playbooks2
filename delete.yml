@@ -68,6 +68,10 @@
     file:
       path: /etc/zabbix/
       state: absent
+  - name: remove mysql
+    yum:
+      name: mysql
+      state: absent
   - name: remove mysql-server
     yum:
       name: mysql-server
