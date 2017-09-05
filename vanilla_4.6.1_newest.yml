@@ -8,19 +8,14 @@
       path: /usr/local/install
       state: directory
       mode: 0755
-  - name: Copy installer 4.6.1
-    copy:
-      src: /usr/local/install/4.6.1/installer.jar
-      dest: /usr/local/install
-      mode: 0755
   - name: Download zabbix rpm (zabbix version 3.010)
     get_url:
       url: http://repo.zabbix.com/zabbix/3.0/rhel/7/x86_64/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
-      dest: /usr/local/install/4.6.1/zabbix/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
+      dest: /usr/local/install/zabbix-agent-3.0.10-1.el7.x86_64.rpm 
       mode: 0755
   - name: Install zabbix-agent
     yum:
-      name: /usr/local/install/4.6.1/zabbix/zabbix-agent-3.0.10-1.el7.x86_64.rpm
+      name: /usr/local/install/zabbix-agent-3.0.10-1.el7.x86_64.rpm
       state: latest
   - name: Create folder for zabbix
     file: 
