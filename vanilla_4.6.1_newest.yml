@@ -111,6 +111,10 @@
     yum:
       name: httpd
       state: latest
+  - name: Install unzip
+    yum:
+      name: unzip
+      state: latest
   - name: Copy mod_jk module for httpd
     copy:
       src: /usr/local/install/4.6.1/modules/mod_jk.so
