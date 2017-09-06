@@ -126,12 +126,12 @@
   - name: Copy tomcat for kms
     unarchive:
       src: /usr/local/install/4.6.1/tomcat7-kms.zip
-      dest: /usr/local/tomcat7-kms
+      dest: /usr/local/
       remote_src: True
   - name: Copy tomcat for solr
     unarchive:
       src: /usr/local/install/4.6.1/tomcat7-solr
-      dest: /usr/local/tomcat7-solr
+      dest: /usr/local/
       remote_src: True
   - name: Copy kms.war
     copy:
