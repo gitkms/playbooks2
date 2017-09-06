@@ -142,7 +142,7 @@
       remote_src: True
   - name: Unzip tomcat for solr
     unarchive:
-      src: /usr/local/install/tomcat7-solr
+      src: /usr/local/install/tomcat7-solr.zip
       dest: /usr/local/
       remote_src: True
   - name: Copy kms.war
