@@ -123,14 +123,22 @@
     copy:
       src: /usr/local/install/4.6.1/httpd/
       dest: /etc/httpd
-  - name: Copy tomcat for kms
-    unarchive:
+  - name: Copy tomcat archive
+    copy:
       src: /usr/local/install/4.6.1/tomcat7-kms.zip
+      dest: /usr/local/install
+  - name: Copy tomcat solr archive
+    copy:
+      src: /usr/local/install/4.6.1/tomcat7-solr.zip
+      dest: /usr/local/install
+  - name: Unzip tomcat for kms
+    unarchive:
+      src: /usr/local/install/tomcat7-kms.zip
       dest: /usr/local/
       remote_src: True
-  - name: Copy tomcat for solr
+  - name: Unzip tomcat for solr
     unarchive:
-      src: /usr/local/install/4.6.1/tomcat7-solr
+      src: /usr/local/install/tomcat7-solr
       dest: /usr/local/
       remote_src: True
   - name: Copy kms.war
