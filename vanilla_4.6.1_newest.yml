@@ -152,7 +152,7 @@
   - name: Copy solr.war
     copy:
       src: /usr/local/install/4.6.1/war/kms-solr-4.6.1.war
-      dest: /usr/local/apps/tomcat7-solr/webapps/solr.war
+      dest: /usr/local/tomcat7-solr/webapps/solr.war
   - name: Copy installer
     copy:
       src: /usr/local/install/4.6.1/installer.jar
