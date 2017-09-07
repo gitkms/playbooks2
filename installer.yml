@@ -1,0 +1,4 @@
+- hosts: db_servers
+  tasks:
+  - name: Run Installer
+    command: java -jar /usr/local/install/installer.jar -options /usr/local/install/installer.properties
