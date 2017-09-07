@@ -163,7 +163,7 @@
       dest: /usr/local/install/installer.properties
   - name: Set up installer property
     replace:
-      dest: /usr/local/install/properties.sql
+      dest: /usr/local/install/installer.properties
       regexp: '$db_url'
       replace: '{{ ansible_ssh_host }}'
   - name: Run Installer
