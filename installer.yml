@@ -1,4 +1,7 @@
 - hosts: kms_servers
   tasks:
-  - name: Run Installer
-    command: java -jar /usr/local/install/installer.jar -options /usr/local/install/installer.properties
+  - name: Set up installer autoinstallation xml
+    replace:
+      dest: /usr/local/install/auto-install.xml
+      regexp: 'db_ip'
+      replace: '{{  db_ip }}'
