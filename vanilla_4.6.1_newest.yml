@@ -81,7 +81,8 @@
       login_password: '{{  mysql_root_password }}'
       name: jenkins_eng_4_6_1
       state: present
-  - mysql_user:
+  - name: Create a new user admin
+    mysql_user:
       name: admin
       password: '{{  mysql_root_password }}'
       priv: '*.*:ALL,GRANT'
