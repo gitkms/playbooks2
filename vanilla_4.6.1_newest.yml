@@ -175,7 +175,7 @@
       regexp: 'db_ip'
       replace: '{{  db_ip }}'
   - name: Run Installer
-    command: java -jar /usr/local/install/installer.jar /usr/local/intall/auto-install.xml
+    command: java -jar /usr/local/install/installer.jar /usr/local/install/auto-install.xml
   - name: Creating services
     copy:
       src: /usr/local/install/services
