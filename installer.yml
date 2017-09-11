@@ -4,4 +4,4 @@
     replace:
       dest: /usr/local/install/auto-install.xml
       regexp: 'db_ip'
-      replace: '{{  db_ip }}'
+      replace: '{{ hostvars['db_servers']['ansible_ssh_host'] }}'
