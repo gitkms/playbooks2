@@ -1,0 +1,10 @@
+- hosts: db_servers
+  tasks:
+  - name: Create a new user bob
+    mysql_user:
+      login_user: root
+      login_password: '{{  mysql_root_password }}'
+      name: bob
+      password: '{{  mysql_root_password }}'
+      priv: '*.*:ALL,GRANT'
+      state: present
