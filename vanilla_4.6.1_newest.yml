@@ -81,6 +81,11 @@
       login_password: '{{  mysql_root_password }}'
       name: jenkins_eng_4_6_1
       state: present
+  - mysql_user:
+      name: admin
+      password: '{{  mysql_root_password }}'
+      priv: '*.*:ALL,GRANT'
+      state: present
 - hosts: kms_servers
   tasks:
   - name: Task info
@@ -98,12 +103,12 @@
       path: /usr/local/apps
       state: directory
       mode: 0755
-  - name: Copy java 1.7
+  - name: Copy java 1.8
     copy:
       src: /usr/local/install/4.6.1/jdk-7u80-linux-x64.rpm
       dest: /usr/local/install
       mode: 0755
-  - name: install java 1.7
+  - name: install java 1.8
     yum:
       name: /usr/local/install/jdk-7u80-linux-x64.rpm
       state: latest
@@ -157,17 +162,17 @@
     copy:
       src: /usr/local/install/4.6.1/installer.jar
       dest: /usr/local/install/installer.jar
-  - name: Copy installer properties
+  - name: Copy installer's xml for autoinstallation
     copy:
-      src: /usr/local/install/4.6.1/installer.properties
-      dest: /usr/local/install/installer.properties
-  - name: Set up installer property
+      src: /usr/local/install/4.6.1/auto-install.xml
+      dest: /usr/local/install/auto-install.xml
+  - name: Set up installer autoinstallation xml
     replace:
-      dest: /usr/local/install/installer.properties
-      regexp: '$db_url'
-      replace: '{{ ansible_ssh_host }}'
+      dest: /usr/local/install/auto-install.xml
+      regexp: 'db_ip'
+      replace: '{{  db_ip }}'
   - name: Run Installer
-    command: java -jar installer.jar -options installer.properties
+    command: java -jar /usr/local/install/installer.jar /usr/local/intall/auto-install.xml
   - name: Creating services
     copy:
       src: /usr/local/install/services
