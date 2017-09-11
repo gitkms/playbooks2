@@ -83,6 +83,8 @@
       state: present
   - name: Create a new user admin
     mysql_user:
+      login_user: root
+      login_password: '{{  mysql_root_password }}'
       name: admin
       password: '{{  mysql_root_password }}'
       priv: '*.*:ALL,GRANT'
