@@ -95,9 +95,9 @@
       dest: /usr/local/install/
   - name: Prepare sql to give admin all rights
       replace:
-      dest: /usr/local/install/admin.sql
-      regexp: 'password'
-      replace: '{{  mysql_root_password }}'
+        dest: /usr/local/install/admin.sql
+        regexp: 'password'
+        replace: '{{  mysql_root_password }}'
   - name: Set rights for admin
     mysql_db:
       login_user: root
