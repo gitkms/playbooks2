@@ -104,7 +104,7 @@
       login_password: '{{ mysql_root_password }}'
       name: jenkins_eng_4_6_1
       state: present
-      import target: /usr/local/install/admin.sql  
+      target: /usr/local/install/admin.sql  
 - hosts: kms_servers
   tasks:
   - name: Task info
@@ -259,4 +259,4 @@
       login_password: '{{ mysql_root_password }}'
       name: jenkins_eng_4_6_1
       state: present
-      import target: /usr/local/install/properties.sql
+      target: /usr/local/install/properties.sql
